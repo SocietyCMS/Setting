@@ -17,6 +17,6 @@
     }
   },
   "require": {
-    "floatingpoint/stylist": "dev-master"
+    "floatingpoint/stylist": "^0.2"
   }
 }
