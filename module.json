@@ -1,0 +1,20 @@
+{
+  "name": "Setting",
+  "alias": "setting",
+  "description": "Module for handling all site settings.",
+  "keywords": [],
+  "version": "0.0.1",
+  "active": 1,
+  "order": 1,
+  "providers": [
+    "Modules\\Setting\\Providers\\SettingServiceProvider",
+    "Modules\\Setting\\Providers\\RouteServiceProvider",
+    "Modules\\Setting\\Providers\\ThemeServiceProvider"
+  ],
+  "aliases": {
+    "Setting": "Modules\\Setting\\Facades\\Settings"
+  },
+  "files": [
+    "start.php"
+  ]
+}

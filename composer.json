@@ -1,0 +1,22 @@
+{
+  "name": "societycms/module-setting",
+  "description": "The SocietyCMS Setting module.",
+  "keywords": ["cms", "societycms"],
+  "license": "AGPL",
+  "version": "0.0.1",
+  "type": "societycms-module",
+  "authors": [
+    {
+      "name": "Ralph Huwiler",
+      "email": "ralph@huwiler.rocks"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Modules\\Setting\\": ""
+    }
+  },
+  "require": {
+    "floatingpoint/stylist": "dev-master"
+  }
+}
