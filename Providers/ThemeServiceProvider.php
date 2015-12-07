@@ -8,6 +8,7 @@ class ThemeServiceProvider extends ServiceProvider
 {
     /**
      * Register the service provider.
+     *
      * @return void
      */
     public function register()
@@ -19,7 +20,7 @@ class ThemeServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register all themes with activating them
+     * Register all themes with activating them.
      */
     private function registerAllThemes()
     {
@@ -31,11 +32,10 @@ class ThemeServiceProvider extends ServiceProvider
     }
 
     /**
-     * Set the active theme based on the settings
+     * Set the active theme based on the settings.
      */
     private function setActiveTheme()
     {
-
         if ($this->app->runningInConsole()) {
             return;
         }
@@ -49,11 +49,13 @@ class ThemeServiceProvider extends ServiceProvider
         //$themeName = $this->app['setting.settings']->get('core::template', null, 'Flatly');
 
         $themeName = 'Flatly';
+
         return $this->app['stylist']->activate($themeName, true);
     }
 
     /**
-     * Check if we are in the administration
+     * Check if we are in the administration.
+     *
      * @return bool
      */
     private function inAdministration()

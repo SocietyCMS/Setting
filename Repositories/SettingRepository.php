@@ -1,23 +1,24 @@
-<?php namespace Modules\Setting\Repositories;
+<?php
+
+namespace Modules\Setting\Repositories;
 
 use Modules\Core\Repositories\Eloquent\EloquentBaseRepository;
-use Modules\Setting\Events\SettingWasCreated;
-use Modules\Setting\Events\SettingWasUpdated;
 
 class SettingRepository extends EloquentBaseRepository
 {
     /**
-     * Specify Model class name
+     * Specify Model class name.
      *
      * @return string
      */
-    function model()
+    public function model()
     {
-        return "Modules\\Setting\\Entities\\Setting";
+        return 'Modules\\Setting\\Entities\\Setting';
     }
 
     /**
-     * Return all settings, with the setting name as key
+     * Return all settings, with the setting name as key.
+     *
      * @return array
      */
     /*   public function all()
@@ -32,9 +33,12 @@ class SettingRepository extends EloquentBaseRepository
            return $settings;
        }
    */
+
     /**
-     * Create or update the settings
+     * Create or update the settings.
+     *
      * @param $settings
+     *
      * @return mixed|void
      */
     public function createOrUpdate($settings)
@@ -51,7 +55,8 @@ class SettingRepository extends EloquentBaseRepository
     }
 
     /**
-     * Remove the token from the input array
+     * Remove the token from the input array.
+     *
      * @param $settings
      */
     private function removeTokenKey(&$settings)
@@ -60,8 +65,10 @@ class SettingRepository extends EloquentBaseRepository
     }
 
     /**
-     * Find a setting by its name
+     * Find a setting by its name.
+     *
      * @param $settingName
+     *
      * @return mixed
      */
     public function findByName($settingName)
@@ -70,7 +77,8 @@ class SettingRepository extends EloquentBaseRepository
     }
 
     /**
-     * Create a setting with the given name
+     * Create a setting with the given name.
+     *
      * @param string $settingName
      * @param $settingValues
      */
@@ -85,7 +93,8 @@ class SettingRepository extends EloquentBaseRepository
     }
 
     /**
-     * Update the given setting
+     * Update the given setting.
+     *
      * @param object setting
      * @param $settingValues
      */
@@ -99,22 +108,23 @@ class SettingRepository extends EloquentBaseRepository
         return $setting->save();
     }
 
-
     /**
      * Return all modules that have settings
-     * with its settings
-     * @param  array|string $modules
+     * with its settings.
+     *
+     * @param array|string $modules
+     *
      * @return array
      */
     public function moduleSettings($modules)
     {
         if (is_string($modules)) {
-            return config('society.' . strtolower($modules) . ".settings");
+            return config('society.'.strtolower($modules).'.settings');
         }
 
         $modulesWithSettings = [];
         foreach ($modules as $module) {
-            if ($moduleSettings = config('society.' . strtolower($module->getName()) . ".settings")) {
+            if ($moduleSettings = config('society.'.strtolower($module->getName()).'.settings')) {
                 $modulesWithSettings[$module->getName()] = $moduleSettings;
             }
         }
@@ -123,8 +133,10 @@ class SettingRepository extends EloquentBaseRepository
     }
 
     /**
-     * Return the saved module settings
+     * Return the saved module settings.
+     *
      * @param $module
+     *
      * @return mixed
      */
     public function savedModuleSettings($module)
@@ -138,18 +150,22 @@ class SettingRepository extends EloquentBaseRepository
     }
 
     /**
-     * Find settings by module name
-     * @param  string $module Module name
+     * Find settings by module name.
+     *
+     * @param string $module Module name
+     *
      * @return mixed
      */
     public function findByModule($module)
     {
-        return $this->model->where('name', 'LIKE', $module . '::%')->get();
+        return $this->model->where('name', 'LIKE', $module.'::%')->get();
     }
 
     /**
-     * Find the given setting name for the given module
-     * @param  string $settingName
+     * Find the given setting name for the given module.
+     *
+     * @param string $settingName
+     *
      * @return mixed
      */
     public function get($settingName)
@@ -157,10 +173,11 @@ class SettingRepository extends EloquentBaseRepository
         return $this->model->where('name', 'LIKE', "{$settingName}")->first();
     }
 
-
     /**
-     * Return the setting value(s). If values are ann array, json_encode them
+     * Return the setting value(s). If values are ann array, json_encode them.
+     *
      * @param string|array $settingValues
+     *
      * @return string
      */
     private function getSettingValue($settingValues)
