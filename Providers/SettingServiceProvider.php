@@ -1,15 +1,15 @@
-<?php namespace Modules\Setting\Providers;
+<?php
+
+namespace Modules\Setting\Providers;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 use Modules\Setting\Facades\Settings as SettingsFacade;
-use Modules\Setting\Repositories\Eloquent\EloquentSettingRepository;
 use Modules\Setting\Repositories\SettingRepository;
 use Modules\Setting\Support\Settings;
 
 class SettingServiceProvider extends ServiceProvider
 {
-
     /**
      * Indicates if loading of the provider is deferred.
      *
@@ -56,10 +56,10 @@ class SettingServiceProvider extends ServiceProvider
     protected function registerConfig()
     {
         $this->publishes([
-            __DIR__ . '/../Config/config.php' => config_path('setting.php'),
+            __DIR__.'/../Config/config.php' => config_path('setting.php'),
         ]);
         $this->mergeConfigFrom(
-            __DIR__ . '/../Config/config.php', 'setting'
+            __DIR__.'/../Config/config.php', 'setting'
         );
     }
 
@@ -72,10 +72,10 @@ class SettingServiceProvider extends ServiceProvider
     {
         $viewPath = base_path('resources/views/modules/setting');
 
-        $sourcePath = __DIR__ . '/../Resources/views';
+        $sourcePath = __DIR__.'/../Resources/views';
 
         $this->publishes([
-            $sourcePath => $viewPath
+            $sourcePath => $viewPath,
         ]);
 
         $this->loadViewsFrom([$viewPath, $sourcePath], 'setting');
@@ -93,7 +93,7 @@ class SettingServiceProvider extends ServiceProvider
         if (is_dir($langPath)) {
             $this->loadTranslationsFrom($langPath, 'setting');
         } else {
-            $this->loadTranslationsFrom(__DIR__ . '/../Resources/lang', 'setting');
+            $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'setting');
         }
     }
 
@@ -112,7 +112,6 @@ class SettingServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return array();
+        return [];
     }
-
 }
