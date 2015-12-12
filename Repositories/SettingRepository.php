@@ -116,7 +116,7 @@ class SettingRepository extends EloquentBaseRepository
      *
      * @return array
      */
-    public function moduleSettings($modules)
+    public function moduleConfig($modules)
     {
         if (is_string($modules)) {
             return config('society.'.strtolower($modules).'.settings');
@@ -132,6 +132,24 @@ class SettingRepository extends EloquentBaseRepository
         return $modulesWithSettings;
     }
 
+    public function moduleSettings($module)
+    {
+        $settings = config('society.'.strtolower($module).'.settings');
+
+        foreach ($settings as $name => $options)
+        {
+            $settings[$name]['setting'] = null;
+
+            if(isset($settings[$name]['default'])) {
+                $settings[$name]['setting'] = $settings[$name]['default'];
+            }
+
+            if($dbSetting = $this->get("$module::$name")->value) {
+                $settings[$name]['setting'] = $dbSetting;
+            }
+        }
+        return $settings;
+    }
     /**
      * Return the saved module settings.
      *

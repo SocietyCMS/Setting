@@ -11,7 +11,7 @@
     <div class="ui grid">
         <div class="three wide column">
             <div class="ui vertical fluid tabular menu">
-                @foreach ($modulesWithSettings as $module => $settings)
+                @foreach ($modules as $module => $settings)
                     <a href="{{ URL::route('backend::setting.settings.edit', [$module]) }}"
                        class="item {{ $module != $currentModule->getLowerName() ?: 'active' }}">
                         {{ ucfirst($module) }}
@@ -25,11 +25,11 @@
                     {!! csrf_field() !!}
                     <i class="settings icon"></i>
                     <div class="content">
-                        {{ ucfirst($currentModule) }}
+                        {{ ucfirst($currentModule->getLowerName()) }}
                     </div>
                 </h5>
                 <div class="ui attached segment">
-                    @include('setting::backend.partials.fields', ['settings' => $currentModuleSettings])
+                    @include('setting::backend.partials.fields', ['currentModuleSettings' => $currentModuleSettings])
                 </div>
                 <div class="ui bottom attached segment">
 

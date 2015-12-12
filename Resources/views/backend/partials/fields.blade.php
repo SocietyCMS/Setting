@@ -1,12 +1,11 @@
-@foreach ($settings as $settingName => $moduleInfo)
+@foreach ($currentModuleSettings as $settingName => $settings)
 
-    <?php $fieldView = str_contains($moduleInfo['view'], '::') ? $moduleInfo['view'] : "setting::backend.fields.{$moduleInfo['view']}" ?>
+    <?php $fieldView = str_contains($settings['view'], '::') ? $settings['view'] : "setting::backend.fields.{$settings['view']}" ?>
 
     @include($fieldView, [
+        'settingName' => $settingName,
         'settings' => $settings,
-        'setting' => $settingName,
-        'moduleInfo' => $moduleInfo,
-        'settingName' => strtolower($currentModule) . '::' . $settingName
+        'moduleSettingName' => strtolower($currentModule) . '::' . $settingName
     ])
 
 @endforeach

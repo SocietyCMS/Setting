@@ -34,14 +34,10 @@ class SettingController extends AdminBaseController
 
     public function edit(Module $currentModule)
     {
-        $this->session->set('module', $currentModule->getLowerName());
-
-        $modulesWithSettings = $this->setting->moduleSettings($this->module->enabled());
-
         $currentModuleSettings = $this->setting->moduleSettings($currentModule->getLowerName());
-        $dbSettings = $this->setting->savedModuleSettings($currentModule->getLowerName());
+        $modules = $this->setting->moduleConfig($this->module->enabled());
 
-        return view('setting::backend.settings.module-settings', compact('currentModule', 'modulesWithSettings', 'currentModuleSettings', 'dbSettings'));
+        return view('setting::backend.settings.module-settings', compact('currentModule','currentModuleSettings', 'modules'));
     }
 
     public function store(SettingRequest $request)

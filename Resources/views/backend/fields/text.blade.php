@@ -1,11 +1,11 @@
 <div class="field">
     <label for="{{$settingName}}">
-        {{trans($moduleInfo['description'])}}
+        {{trans($settings['description'])}}
     </label>
 
     <input type="text"
            name="{{$settingName}}"
-           placeholder="{{ trans($moduleInfo['description'])}}"
-           value="{{ old($settingName, isset($dbSettings[$settingName])?$dbSettings[$settingName]->value:null) }}"
+           placeholder="{{ trans($settings['description'])}}"
+           value="{{ old($settingName, trans($settings['setting'])) }}"
     >
 </div>
