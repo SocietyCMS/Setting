@@ -1,9 +1,8 @@
 <div class="field">
     <div class="ui checkbox">
         <input type="checkbox" name="{{$settingName}}"
-                {{ isset($dbSettings[$settingName]) && (bool)$dbSettings[$settingName]->value == true ? 'checked' : '' }}>
-        <label for="{{$settingName}}">{{trans($moduleInfo['description'])}}</label>
+               @if($settings['setting']) checked @endif
+               >
+        <label for="{{$settingName}}">{{trans($settings['title'])}}</label>
     </div>
 </div>
-
-{{dd($moduleInfo)}}

@@ -1,6 +1,6 @@
 <div class="field">
     <label for="{{$settingName}}">
-        {{trans($settings['description'])}}
+        {{trans($settings['title'])}}
     </label>
 
     <input type="text"

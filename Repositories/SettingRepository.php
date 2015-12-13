@@ -4,6 +4,10 @@ namespace Modules\Setting\Repositories;
 
 use Modules\Core\Repositories\Eloquent\EloquentBaseRepository;
 
+/**
+ * Class SettingRepository
+ * @package Modules\Setting\Repositories
+ */
 class SettingRepository extends EloquentBaseRepository
 {
     /**
@@ -15,24 +19,6 @@ class SettingRepository extends EloquentBaseRepository
     {
         return 'Modules\\Setting\\Entities\\Setting';
     }
-
-    /**
-     * Return all settings, with the setting name as key.
-     *
-     * @return array
-     */
-    /*   public function all()
-       {
-           $rawSettings = parent::all();
-
-           $settings = [];
-           foreach ($rawSettings as $setting) {
-               $settings[$setting->name] = $setting;
-           }
-
-           return $settings;
-       }
-   */
 
     /**
      * Create or update the settings.
@@ -80,7 +66,7 @@ class SettingRepository extends EloquentBaseRepository
      * Create a setting with the given name.
      *
      * @param string $settingName
-     * @param $settingValues
+     * @param        $settingValues
      */
     private function createForName($settingName, $settingValues)
     {
@@ -119,37 +105,46 @@ class SettingRepository extends EloquentBaseRepository
     public function moduleConfig($modules)
     {
         if (is_string($modules)) {
-            return config('society.'.strtolower($modules).'.settings');
+            $config = config('society.' . strtolower($modules) . '.settings');
+            return $config;
         }
 
-        $modulesWithSettings = [];
+        $config = [];
         foreach ($modules as $module) {
-            if ($moduleSettings = config('society.'.strtolower($module->getName()).'.settings')) {
-                $modulesWithSettings[$module->getName()] = $moduleSettings;
+            if ($moduleSettings = config('society.' . strtolower($module->getName()) . '.settings')) {
+                $config[$module->getName()] = $moduleSettings;
             }
         }
 
-        return $modulesWithSettings;
+        return $config;
     }
 
+    /**
+     * @param $module
+     * @return mixed
+     */
     public function moduleSettings($module)
     {
-        $settings = config('society.'.strtolower($module).'.settings');
+        $settings = $this->moduleConfig($module);
 
-        foreach ($settings as $name => $options)
-        {
-            $settings[$name]['setting'] = null;
+        foreach ($settings as $name => $options) {
+            $settings[$name]['setting'] = "";
 
-            if(isset($settings[$name]['default'])) {
+            if (!isset($settings[$name]['description'])) {
+                $settings[$name]['description'] = "";
+            }
+
+            if (isset($settings[$name]['default'])) {
                 $settings[$name]['setting'] = $settings[$name]['default'];
             }
 
-            if($dbSetting = $this->get("$module::$name")->value) {
-                $settings[$name]['setting'] = $dbSetting;
+            if ($dbSetting = $this->get("$module::$name")) {
+                $settings[$name]['setting'] = $dbSetting->value;
             }
         }
         return $settings;
     }
+
     /**
      * Return the saved module settings.
      *
@@ -176,7 +171,7 @@ class SettingRepository extends EloquentBaseRepository
      */
     public function findByModule($module)
     {
-        return $this->model->where('name', 'LIKE', $module.'::%')->get();
+        return $this->model->where('name', 'LIKE', $module . '::%')->get();
     }
 
     /**
