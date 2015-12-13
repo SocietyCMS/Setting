@@ -128,6 +128,7 @@ class SettingRepository extends EloquentBaseRepository
         $settings = $this->moduleConfig($module);
 
         foreach ($settings as $name => $options) {
+
             $settings[$name]['setting'] = "";
 
             if (!isset($settings[$name]['description'])) {
@@ -187,7 +188,7 @@ class SettingRepository extends EloquentBaseRepository
     }
 
     /**
-     * Return the setting value(s). If values are ann array, json_encode them.
+     * Return the setting value(s). If values are an array, json_encode them.
      *
      * @param string|array $settingValues
      *

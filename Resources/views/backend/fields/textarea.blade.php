@@ -1,7 +1,7 @@
 <div class="field">
-    <label for="{{$settingName}}">
+    <label for="{{$moduleSettingName}}">
         {{trans($settings['title'])}}
     </label>
-    <textarea name="{{$settingName}}"
-              placeholder="{{ trans($settings['description'])}}">{{ old($settingName, trans($settings['setting']) )}}</textarea>
+    <textarea name="{{$moduleSettingName}}"
+              placeholder="{{ trans($settings['description'])}}">{{ old($moduleSettingName, trans($settings['setting']) )}}</textarea>
 </div>

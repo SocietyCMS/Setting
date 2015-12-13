@@ -5,6 +5,10 @@ namespace Modules\Setting\Support;
 use Modules\Core\Contracts\Setting;
 use Modules\Setting\Repositories\SettingRepository;
 
+/**
+ * Class Settings
+ * @package Modules\Setting\Support
+ */
 class Settings implements Setting
 {
     /**
@@ -48,11 +52,22 @@ class Settings implements Setting
         $defaultFromConfig = $this->getDefaultFromConfigFor($name);
 
         $setting = $this->setting->get($name);
+
         if (!$setting) {
             return is_null($default) ? trans($defaultFromConfig) : trans($default);
         }
 
         return empty($setting->value) ? trans($defaultFromConfig) : $setting->value;
+    }
+
+    /**
+     * @param      $name
+     * @param null $default
+     * @return mixed
+     */
+    public function getBool($name, $default = null)
+    {
+        return filter_var($this->get($name, $default), FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
