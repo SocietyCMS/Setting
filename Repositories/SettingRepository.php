@@ -2,6 +2,7 @@
 
 namespace Modules\Setting\Repositories;
 
+use Illuminate\Support\Arr;
 use Modules\Core\Repositories\Eloquent\EloquentBaseRepository;
 
 /**
@@ -23,7 +24,8 @@ class SettingRepository extends EloquentBaseRepository
     protected $settingBlueprint = [
         'title'       => '',
         'description' => '',
-        'view'        => '',
+        'type'        => 'string',
+        'view'        => 'text',
         'default'     => '',
         'setting'     => '',
     ];
@@ -40,6 +42,7 @@ class SettingRepository extends EloquentBaseRepository
         $this->removeTokenKey($settings);
 
         foreach ($settings as $settingName => $settingValues) {
+
             if ($setting = $this->findByName($settingName)) {
                 $this->updateSetting($setting, $settingValues);
                 continue;
@@ -81,7 +84,7 @@ class SettingRepository extends EloquentBaseRepository
         $setting = new $this->model();
         $setting->name = $settingName;
 
-        $setting->value = $this->getSettingValue($settingValues);
+        $setting->value = $this->getSettingValue($settingName, $settingValues);
 
         return $setting->save();
     }
@@ -96,8 +99,7 @@ class SettingRepository extends EloquentBaseRepository
     {
         $name = $setting->name;
 
-        $oldValues = $setting->value;
-        $setting->value = $this->getSettingValue($settingValues);
+        $setting->value = $this->getSettingValue($name, $settingValues);
 
         return $setting->save();
     }
@@ -165,7 +167,7 @@ class SettingRepository extends EloquentBaseRepository
                 }
 
                 if ($dbSetting = $this->get("$module::$name")) {
-                    $setting['setting'] = $dbSetting->value;
+                    $setting['setting'] = $dbSetting;
                 }
 
                 $settings[$sectionTitle][$name] =  $setting;
@@ -214,8 +216,10 @@ class SettingRepository extends EloquentBaseRepository
      */
     public function get($settingName)
     {
-        return $this->model->where('name', 'LIKE', "{$settingName}")->first();
+        return unserialize($this->model->where('name', 'LIKE', "{$settingName}")->value('value'));
     }
+
+
 
     /**
      * Return the setting value(s). If values are an array, json_encode them.
@@ -224,12 +228,36 @@ class SettingRepository extends EloquentBaseRepository
      *
      * @return string
      */
-    private function getSettingValue($settingValues)
+    private function getSettingValue($settingName, $settingValues)
     {
-        if (is_array($settingValues)) {
-            return json_encode($settingValues);
+        $type = $this->getTypeConfigFor($settingName);
+
+        if($type == 'boolean')
+        {
+            $settingValues =  (bool)$settingValues;
         }
 
-        return $settingValues;
+        return serialize($settingValues);
+    }
+
+
+    /**
+     * Get the default value from the settings configuration file,
+     * for the given setting name.
+     *
+     * @param string $name
+     *
+     * @return string
+     */
+    private function getTypeConfigFor($name)
+    {
+        list($module, $settingName) = explode('::', $name);
+
+        $result = array();
+        foreach(config("society.$module.settings") as $sub) {
+            $result = array_merge($result, $sub);
+        }
+
+        return Arr::get($result, "$settingName.type", 'string');
     }
 }

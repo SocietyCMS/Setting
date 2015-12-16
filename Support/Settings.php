@@ -2,8 +2,10 @@
 
 namespace Modules\Setting\Support;
 
+use Illuminate\Support\Arr;
 use Modules\Core\Contracts\Setting;
 use Modules\Setting\Repositories\SettingRepository;
+use Symfony\Component\Process\Exception\InvalidArgumentException;
 
 /**
  * Class Settings
@@ -49,25 +51,19 @@ class Settings implements Setting
      */
     public function get($name, $default = null)
     {
+        if (!str_contains($name, '::')) {
+            throw new InvalidArgumentException("Setting key must be in the format '[module]::[setting]', '$name' given.");
+        }
+
         $defaultFromConfig = $this->getDefaultFromConfigFor($name);
 
         $setting = $this->setting->get($name);
 
         if (!$setting) {
-            return is_null($default) ? trans($defaultFromConfig) : trans($default);
+            return is_null($default) ? $defaultFromConfig : $default;
         }
 
-        return empty($setting->value) ? trans($defaultFromConfig) : $setting->value;
-    }
-
-    /**
-     * @param      $name
-     * @param null $default
-     * @return mixed
-     */
-    public function getBool($name, $default = null)
-    {
-        return filter_var($this->get($name, $default), FILTER_VALIDATE_BOOLEAN);
+        return empty($setting) ? $defaultFromConfig : $setting;
     }
 
     /**
@@ -82,7 +78,12 @@ class Settings implements Setting
     {
         list($module, $settingName) = explode('::', $name);
 
-        return config("society.$module.settings.$settingName.default", '');
+        $result = array();
+        foreach(config("society.$module.settings") as $sub) {
+            $result = array_merge($result, $sub);
+        }
+
+        return Arr::get($result, "$settingName.default");
     }
 
     /**
