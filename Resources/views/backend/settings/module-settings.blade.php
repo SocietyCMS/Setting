@@ -21,25 +21,28 @@
         </div>
         <div class="thirteen wide stretched column">
             <form class="ui form" role="form" method="POST" action="{{route('backend::setting.settings.store')}}">
-                <h5 class="ui top attached header">
-                    {!! csrf_field() !!}
-                    <i class="settings icon"></i>
-                    <div class="content">
-                        {{ ucfirst($currentModule->getLowerName()) }}
+                @foreach($currentModuleSettings as $sectionTitle => $sectionSettings)
+                    <h5 class="ui top attached header">
+                        {!! csrf_field() !!}
+                        <i class="settings icon"></i>
+                        <div class="content">
+                            {{ trans($sectionTitle) }}
+                        </div>
+                    </h5>
+                    <div class="ui attached setting segment">
+                        @include('setting::backend.partials.fields', ['currentModuleSettings' => $sectionSettings])
                     </div>
-                </h5>
-                <div class="ui attached segment">
-                    @include('setting::backend.partials.fields', ['currentModuleSettings' => $currentModuleSettings])
-                </div>
-                <div class="ui bottom attached segment">
+                    <div class="ui bottom attached segment">
 
-                    <button type="submit"  class="ui primary button">
-                        {{ trans('core::elements.button.update') }}
-                    </button>
-                    <a class="ui button" href="{{ URL::route('backend::setting.settings.index')}}">
-                        {{ trans('core::elements.button.cancel') }}
-                    </a>
-                </div>
+                        <button type="submit"  class="ui primary button">
+                            {{ trans('core::elements.button.update') }}
+                        </button>
+                        <a class="ui button" href="{{ URL::route('backend::setting.settings.index')}}">
+                            {{ trans('core::elements.button.cancel') }}
+                        </a>
+                    </div>
+                @endforeach
+
             </form>
         </div>
     </div>

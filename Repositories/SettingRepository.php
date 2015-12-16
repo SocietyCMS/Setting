@@ -20,6 +20,14 @@ class SettingRepository extends EloquentBaseRepository
         return 'Modules\\Setting\\Entities\\Setting';
     }
 
+    protected $settingBlueprint = [
+        'title'       => '',
+        'description' => '',
+        'view'        => '',
+        'default'     => '',
+        'setting'     => '',
+    ];
+
     /**
      * Create or update the settings.
      *
@@ -106,6 +114,7 @@ class SettingRepository extends EloquentBaseRepository
     {
         if (is_string($modules)) {
             $config = config('society.' . strtolower($modules) . '.settings');
+
             return $config;
         }
 
@@ -125,24 +134,45 @@ class SettingRepository extends EloquentBaseRepository
      */
     public function moduleSettings($module)
     {
-        $settings = $this->moduleConfig($module);
+        $settings = [];
 
-        foreach ($settings as $name => $options) {
+        $settingsConfig = $this->moduleConfig($module);
 
-            $settings[$name]['setting'] = "";
+        foreach ($settingsConfig as $sectionTitle => $section) {
 
-            if (!isset($settings[$name]['description'])) {
-                $settings[$name]['description'] = "";
+            $settings[$sectionTitle] = [];
+
+            foreach ($section as $name => $options) {
+
+                $setting = $this->settingBlueprint;
+
+                if (isset($options['title'])) {
+                    $setting['title'] = $options['title'];
+                }
+
+                if (isset($options['description'])) {
+                    $setting['description'] = $options['description'];
+                }
+
+                if (isset($options['view'])) {
+                    $setting['view'] = $options['view'];
+                }
+
+
+                if (isset($options['default'])) {
+                    $setting['default'] = $options['default'];
+                    $setting['setting'] = $options['default'];
+                }
+
+                if ($dbSetting = $this->get("$module::$name")) {
+                    $setting['setting'] = $dbSetting->value;
+                }
+
+                $settings[$sectionTitle][$name] =  $setting;
             }
 
-            if (isset($settings[$name]['default'])) {
-                $settings[$name]['setting'] = $settings[$name]['default'];
-            }
-
-            if ($dbSetting = $this->get("$module::$name")) {
-                $settings[$name]['setting'] = $dbSetting->value;
-            }
         }
+
         return $settings;
     }
 
