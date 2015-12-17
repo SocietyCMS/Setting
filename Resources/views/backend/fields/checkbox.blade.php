@@ -7,5 +7,10 @@
                >
         <label for="{{$moduleSettingName}}">{{trans($settings['title'])}}</label>
     </div>
+    @if(isset($settings['description']))
+        <div class="ui label">
+            {{ trans($settings['description'])}}
+        </div>
+    @endif
 </div>
 <script>$('.ui.checkbox').checkbox();</script>
