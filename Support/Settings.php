@@ -144,7 +144,7 @@ class Settings implements Setting
      */
     private function getDefaultFromConfigFor($name)
     {
-        return Arr::get($this->getConfigFor($name), "default");
+        return Arr::get($this->getConfigFor($name), "default")?:'';
     }
 
     /**
