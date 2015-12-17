@@ -6,10 +6,9 @@
 
     <input type="text"
            name="{{$moduleSettingName}}"
-           placeholder="{{ trans($settings['description'])}}"
-           value="{{ old($moduleSettingName, trans($settings['setting'])) }}"
+           value="{{ old($moduleSettingName, trans(Setting::get($moduleSettingName))) }}"
     >
-    @if($settings['description'])
+    @if(isset($settings['description']))
         <div class="ui label">
             {{ trans($settings['description'])}}
         </div>

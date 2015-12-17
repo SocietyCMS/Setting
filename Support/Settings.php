@@ -35,9 +35,7 @@ class Settings implements Setting
      */
     public function has($name)
     {
-        $default = microtime(true);
-
-        return $this->get($name, $default) !== $default;
+        return $this->setting->has($name);
     }
 
     /**
@@ -57,33 +55,11 @@ class Settings implements Setting
 
         $defaultFromConfig = $this->getDefaultFromConfigFor($name);
 
-        $setting = $this->setting->get($name);
-
-        if (!$setting) {
-            return is_null($default) ? $defaultFromConfig : $default;
+        if ($this->setting->has($name)) {
+            return $this->setting->get($name);
         }
 
-        return empty($setting) ? $defaultFromConfig : $setting;
-    }
-
-    /**
-     * Get the default value from the settings configuration file,
-     * for the given setting name.
-     *
-     * @param string $name
-     *
-     * @return string
-     */
-    private function getDefaultFromConfigFor($name)
-    {
-        list($module, $settingName) = explode('::', $name);
-
-        $result = array();
-        foreach(config("society.$module.settings") as $sub) {
-            $result = array_merge($result, $sub);
-        }
-
-        return Arr::get($result, "$settingName.default");
+        return is_null($default) ? $defaultFromConfig : $default;
     }
 
     /**
@@ -96,5 +72,96 @@ class Settings implements Setting
      */
     public function set($key, $value)
     {
+        if ($config = $this->getConfigFor($key)) {
+
+            if ($type = Arr::get($config, "type")) {
+                @settype($value, $type);
+            }
+            $this->setting->set($key, $value);
+        }
+    }
+
+    /**
+     * Set multiple given configuration values from a request.
+     *
+     * @param mixed $settings
+     *
+     * @return void
+     */
+    public function setFromRequest($settings)
+    {
+        $this->removeTokenKey($settings);
+
+        foreach ($settings as $settingName => $settingValues) {
+            $this->set($settingName, $settingValues);
+        }
+    }
+
+    /**
+     * Return all modules that have settings
+     * with its settings.
+     *
+     * @param array|string $modules
+     *
+     * @return array
+     */
+    public function moduleConfig($modules)
+    {
+        if (is_string($modules)) {
+            $config = config('society.'.strtolower($modules).'.settings');
+
+            return $config;
+        }
+
+        $config = [];
+        foreach ($modules as $module) {
+            if ($moduleSettings = config('society.'.strtolower($module->getName()).'.settings')) {
+                $config[$module->getName()] = $moduleSettings;
+            }
+        }
+
+        return $config;
+    }
+
+
+    /**
+     * Remove the token from the input array.
+     *
+     * @param $settings
+     */
+    private function removeTokenKey(&$settings)
+    {
+        unset($settings['_token']);
+    }
+
+    /**
+     * Get the default value from the settings configuration file,
+     * for the given setting name.
+     *
+     * @param string $name
+     *
+     * @return string
+     */
+    private function getDefaultFromConfigFor($name)
+    {
+        return Arr::get($this->getConfigFor($name), "default");
+    }
+
+    /**
+     * Get the settings configuration file
+     *
+     * @param $name
+     * @return mixed
+     */
+    private function getConfigFor($name)
+    {
+        list($module, $settingName) = explode('::', $name);
+
+        $result = array();
+        foreach (config("society.$module.settings") as $sub) {
+            $result = array_merge($result, $sub);
+        }
+
+        return Arr::get($result, "$settingName");
     }
 }

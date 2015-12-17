@@ -2,10 +2,10 @@
 
 namespace Modules\Setting\Http\Controllers\backend;
 
-use Illuminate\Session\Store;
 use Modules\Core\Http\Controllers\AdminBaseController;
 use Modules\Setting\Http\Requests\SettingRequest;
 use Modules\Setting\Repositories\SettingRepository;
+use Modules\Setting\Support\Settings;
 use Pingpong\Modules\Module;
 
 /**
@@ -25,15 +25,13 @@ class SettingController extends AdminBaseController
 
     /**
      * SettingController constructor.
-     * @param SettingRepository $setting
-     * @param Store             $session
+     * @param Settings $setting
      */
-    public function __construct(SettingRepository $setting, Store $session)
+    public function __construct(Settings $setting)
     {
         parent::__construct();
         $this->setting = $setting;
         $this->module = app('modules');
-        $this->session = $session;
     }
 
     /**
@@ -50,10 +48,11 @@ class SettingController extends AdminBaseController
      */
     public function edit(Module $currentModule)
     {
-        $currentModuleSettings = $this->setting->moduleSettings($currentModule->getLowerName());
+        $currentModuleSettings = $this->setting->moduleConfig($currentModule->getLowerName());
         $modules = $this->setting->moduleConfig($this->module->enabled());
 
-        return view('setting::backend.settings.module-settings', compact('currentModule','currentModuleSettings', 'modules'));
+        return view('setting::backend.settings.module-settings',
+            compact('currentModule', 'currentModuleSettings', 'modules'));
     }
 
     /**
@@ -62,7 +61,7 @@ class SettingController extends AdminBaseController
      */
     public function store(SettingRequest $request)
     {
-        $this->setting->createOrUpdate($request->request->all());
+        $this->setting->setFromRequest($request->request->all());
 
         flash(trans('setting::messages.settings saved'));
 
