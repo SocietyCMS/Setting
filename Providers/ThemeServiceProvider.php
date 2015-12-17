@@ -36,10 +36,6 @@ class ThemeServiceProvider extends ServiceProvider
      */
     private function setActiveTheme()
     {
-        if ($this->app->runningInConsole()) {
-            return;
-        }
-
         if ($this->inAdministration()) {
             $themeName = $this->app['config']->get('society.core.core.admin-theme');
 
