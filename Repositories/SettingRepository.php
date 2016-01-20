@@ -4,6 +4,7 @@ namespace Modules\Setting\Repositories;
 
 use Illuminate\Support\Arr;
 use Modules\Core\Repositories\Eloquent\EloquentBaseRepository;
+use Prettus\Repository\Events\RepositoryEntityUpdated;
 
 /**
  * Class SettingRepository
@@ -25,9 +26,37 @@ class SettingRepository extends EloquentBaseRepository
      * @param $settingName
      * @return bool
      */
-    public function has($settingName)
+    public function hasWithoutCache($settingName)
     {
         return $this->model->where('name', 'LIKE', "{$settingName}")->count() > 0;
+    }
+
+    /**
+     * @param $settingName
+     * @return bool|mixed
+     */
+    public function has($settingName)
+    {
+        if ( $this->isSkippedCache() ){
+            return $this->hasWithoutCache($settingName);
+        }
+
+        $key = $this->getCacheKey('has', func_get_args());
+        $minutes = $this->getCacheMinutes();
+        $value   = $this->getCacheRepository()->remember($key, $minutes, function() use($settingName) {
+            return $this->hasWithoutCache($settingName);
+        });
+
+        return $value;
+    }
+
+    /**
+     * @param $settingName
+     * @return mixed
+     */
+    public function getWithoutCache($settingName)
+    {
+        return unserialize($this->model->where('name', 'LIKE', "{$settingName}")->value('value'));
     }
 
     /**
@@ -36,7 +65,17 @@ class SettingRepository extends EloquentBaseRepository
      */
     public function get($settingName)
     {
-        return unserialize($this->model->where('name', 'LIKE', "{$settingName}")->value('value'));
+        if ( $this->isSkippedCache() ){
+            return $this->getWithoutCache($settingName);
+        }
+
+        $key = $this->getCacheKey('get', func_get_args());
+        $minutes = $this->getCacheMinutes();
+        $value   = $this->getCacheRepository()->remember($key, $minutes, function() use($settingName) {
+            return $this->getWithoutCache($settingName);
+        });
+
+        return $value;
     }
 
     /**
@@ -45,9 +84,12 @@ class SettingRepository extends EloquentBaseRepository
      */
     public function set($settingName, $value)
     {
-        $this->model->firstOrCreate([
+        $model = $this->model->firstOrCreate([
             'name' => $settingName
-        ])->update(['value' => serialize($value)]);
+        ]);
+        $model->update(['value' => serialize($value)]);
+
+        event(new RepositoryEntityUpdated($this, $model));
     }
 
 }
