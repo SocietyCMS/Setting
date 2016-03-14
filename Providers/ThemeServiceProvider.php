@@ -42,11 +42,7 @@ class ThemeServiceProvider extends ServiceProvider
             return $this->app['stylist']->activate($themeName, true);
         }
 
-        //$themeName = $this->app['setting.settings']->get('core::template', null, 'Flatly');
-
-        $themeName = 'Flatly';
-
-        return $this->app['stylist']->activate($themeName, true);
+        return $this->app['stylist']->activate($this->app['config']->get('society.core.core.frontend-theme'), true);
     }
 
     /**
