@@ -1,8 +1,12 @@
 {
   "name": "Setting",
   "alias": "setting",
-  "description": "Module for handling all site settings.",
-  "keywords": [],
+  "description": "This Module provides a central place for managing settings.",
+  "keywords": [
+    "core",
+    "module",
+    "societycms"
+  ],
   "version": "0.0.1",
   "active": 1,
   "order": 1,
