@@ -2,6 +2,7 @@
 
 namespace Modules\Setting\Providers;
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 
 class ThemeServiceProvider extends ServiceProvider
@@ -24,10 +25,11 @@ class ThemeServiceProvider extends ServiceProvider
      */
     private function registerAllThemes()
     {
-        $directories = $this->app['files']->directories(base_path('/themes'));
+        $directories = $this->app['files']->directories(base_path('themes'));
 
         foreach ($directories as $directory) {
             $this->app['stylist']->registerPath($directory);
+            $this->registerThemeVendorNamespaces($directory);
         }
     }
 
@@ -55,5 +57,19 @@ class ThemeServiceProvider extends ServiceProvider
         $segment = 1;
 
         return $this->app['request']->segment($segment) === $this->app['config']->get('society.core.core.admin-prefix');
+    }
+
+    private function registerThemeVendorNamespaces($directory)
+    {
+        $themeVendorDirectory = "{$directory}/views/vendor";
+
+        if(!File::exists($themeVendorDirectory)) {
+            return ;
+        }
+        $vendorDirectories = File::directories($themeVendorDirectory);
+        foreach ($vendorDirectories as $vendorDirectory) {
+            $vendor = str_replace("{$themeVendorDirectory}/", '', $vendorDirectory);
+            $this->app['view']->prependNamespace($vendor, $vendorDirectory);
+        }
     }
 }
