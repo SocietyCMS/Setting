@@ -9,8 +9,7 @@ use Modules\Setting\Support\Settings;
 use Pingpong\Modules\Module;
 
 /**
- * Class SettingController
- * @package Modules\Setting\Http\Controllers\backend
+ * Class SettingController.
  */
 class SettingController extends AdminBaseController
 {
@@ -25,6 +24,7 @@ class SettingController extends AdminBaseController
 
     /**
      * SettingController constructor.
+     *
      * @param Settings $setting
      */
     public function __construct(Settings $setting)
@@ -44,6 +44,7 @@ class SettingController extends AdminBaseController
 
     /**
      * @param Module $currentModule
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function edit(Module $currentModule)
@@ -57,6 +58,7 @@ class SettingController extends AdminBaseController
 
     /**
      * @param SettingRequest $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(SettingRequest $request)
