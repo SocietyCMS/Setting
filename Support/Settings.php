@@ -8,8 +8,7 @@ use Modules\Setting\Repositories\SettingRepository;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 
 /**
- * Class Settings
- * @package Modules\Setting\Support
+ * Class Settings.
  */
 class Settings implements Setting
 {
@@ -73,8 +72,7 @@ class Settings implements Setting
     public function set($key, $value)
     {
         if ($config = $this->getConfigFor($key)) {
-
-            if ($type = Arr::get($config, "type")) {
+            if ($type = Arr::get($config, 'type')) {
                 @settype($value, $type);
             }
             $this->setting->set($key, $value);
@@ -123,7 +121,6 @@ class Settings implements Setting
         return $config;
     }
 
-
     /**
      * Remove the token from the input array.
      *
@@ -144,20 +141,21 @@ class Settings implements Setting
      */
     private function getDefaultFromConfigFor($name)
     {
-        return Arr::get($this->getConfigFor($name), "default")?:'';
+        return Arr::get($this->getConfigFor($name), 'default') ?: '';
     }
 
     /**
-     * Get the settings configuration file
+     * Get the settings configuration file.
      *
      * @param $name
+     *
      * @return mixed
      */
     private function getConfigFor($name)
     {
         list($module, $settingName) = explode('::', $name);
 
-        $result = array();
+        $result = [];
         foreach (config("society.$module.settings") as $sub) {
             $result = array_merge($result, $sub);
         }

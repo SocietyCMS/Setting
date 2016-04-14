@@ -2,13 +2,11 @@
 
 namespace Modules\Setting\Repositories;
 
-use Illuminate\Support\Arr;
 use Modules\Core\Repositories\Eloquent\EloquentBaseRepository;
 use Prettus\Repository\Events\RepositoryEntityUpdated;
 
 /**
- * Class SettingRepository
- * @package Modules\Setting\Repositories
+ * Class SettingRepository.
  */
 class SettingRepository extends EloquentBaseRepository
 {
@@ -24,6 +22,7 @@ class SettingRepository extends EloquentBaseRepository
 
     /**
      * @param $settingName
+     *
      * @return bool
      */
     public function hasWithoutCache($settingName)
@@ -33,17 +32,18 @@ class SettingRepository extends EloquentBaseRepository
 
     /**
      * @param $settingName
+     *
      * @return bool|mixed
      */
     public function has($settingName)
     {
-        if ( $this->isSkippedCache() ){
+        if ($this->isSkippedCache()) {
             return $this->hasWithoutCache($settingName);
         }
 
         $key = $this->getCacheKey('has', func_get_args());
         $minutes = $this->getCacheMinutes();
-        $value   = $this->getCacheRepository()->remember($key, $minutes, function() use($settingName) {
+        $value = $this->getCacheRepository()->remember($key, $minutes, function () use ($settingName) {
             return $this->hasWithoutCache($settingName);
         });
 
@@ -52,6 +52,7 @@ class SettingRepository extends EloquentBaseRepository
 
     /**
      * @param $settingName
+     *
      * @return mixed
      */
     public function getWithoutCache($settingName)
@@ -61,17 +62,18 @@ class SettingRepository extends EloquentBaseRepository
 
     /**
      * @param $settingName
+     *
      * @return mixed
      */
     public function get($settingName)
     {
-        if ( $this->isSkippedCache() ){
+        if ($this->isSkippedCache()) {
             return $this->getWithoutCache($settingName);
         }
 
         $key = $this->getCacheKey('get', func_get_args());
         $minutes = $this->getCacheMinutes();
-        $value   = $this->getCacheRepository()->remember($key, $minutes, function() use($settingName) {
+        $value = $this->getCacheRepository()->remember($key, $minutes, function () use ($settingName) {
             return $this->getWithoutCache($settingName);
         });
 
@@ -85,11 +87,10 @@ class SettingRepository extends EloquentBaseRepository
     public function set($settingName, $value)
     {
         $model = $this->model->firstOrCreate([
-            'name' => $settingName
+            'name' => $settingName,
         ]);
         $model->update(['value' => serialize($value)]);
 
         event(new RepositoryEntityUpdated($this, $model));
     }
-
 }
