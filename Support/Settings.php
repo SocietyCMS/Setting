@@ -48,7 +48,7 @@ class Settings implements Setting
      */
     public function get($name, $default = null)
     {
-        if (!str_contains($name, '::')) {
+        if (! str_contains($name, '::')) {
             throw new InvalidArgumentException("Setting key must be in the format '[module]::[setting]', '$name' given.");
         }
 
