@@ -63,7 +63,7 @@ class ThemeServiceProvider extends ServiceProvider
     {
         $themeVendorDirectory = "{$directory}/views/vendor";
 
-        if (!File::exists($themeVendorDirectory)) {
+        if (! File::exists($themeVendorDirectory)) {
             return;
         }
         $vendorDirectories = File::directories($themeVendorDirectory);
