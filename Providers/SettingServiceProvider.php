@@ -24,9 +24,6 @@ class SettingServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->registerConfig();
-        $this->registerTranslations();
-        $this->registerViews();
     }
 
     /**
@@ -46,55 +43,6 @@ class SettingServiceProvider extends ServiceProvider
             $loader = AliasLoader::getInstance();
             $loader->alias('Settings', SettingsFacade::class);
         });
-    }
-
-    /**
-     * Register config.
-     *
-     * @return void
-     */
-    protected function registerConfig()
-    {
-        $this->publishes([
-            __DIR__.'/../Config/config.php' => config_path('setting.php'),
-        ]);
-        $this->mergeConfigFrom(
-            __DIR__.'/../Config/config.php', 'setting'
-        );
-    }
-
-    /**
-     * Register views.
-     *
-     * @return void
-     */
-    public function registerViews()
-    {
-        $viewPath = base_path('resources/views/modules/setting');
-
-        $sourcePath = __DIR__.'/../Resources/views';
-
-        $this->publishes([
-            $sourcePath => $viewPath,
-        ]);
-
-        $this->loadViewsFrom([$viewPath, $sourcePath], 'setting');
-    }
-
-    /**
-     * Register translations.
-     *
-     * @return void
-     */
-    public function registerTranslations()
-    {
-        $langPath = base_path('resources/lang/modules/setting');
-
-        if (is_dir($langPath)) {
-            $this->loadTranslationsFrom($langPath, 'setting');
-        } else {
-            $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'setting');
-        }
     }
 
     private function registerBindings()
