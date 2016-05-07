@@ -65,7 +65,7 @@ class SettingController extends AdminBaseController
     {
         $this->setting->setFromRequest($request->request->all());
 
-        flash(trans('setting::messages.settings saved'));
+        flash(trans('core::messages.resource.resource saved',['name' => trans('setting::setting.title.settings')]));
 
         return redirect()->back();
     }
