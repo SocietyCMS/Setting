@@ -3,7 +3,6 @@
 namespace Modules\Setting\Support;
 
 use FloatingPoint\Stylist\Theme\Theme;
-use Illuminate\Support\Str;
 
 class ThemeOptions
 {
@@ -23,7 +22,7 @@ class ThemeOptions
     }
 
     /**
-     * Get the options defined in the themes json file
+     * Get the options defined in the themes json file.
      *
      * @return mixed
      */
@@ -38,7 +37,7 @@ class ThemeOptions
 
     public function getOption($name, $default = null)
     {
-        if(!$this->getOptions()) {
+        if (! $this->getOptions()) {
             return;
         }
         if (property_exists($this->getOptions(), $name)) {
@@ -47,13 +46,12 @@ class ThemeOptions
 
         $options = $this->getOptions();
         foreach (explode('.', $name) as $segment) {
-            if (!property_exists($options, $segment)) {
+            if (! property_exists($options, $segment)) {
                 return $default;
             }
             $options = $options->$segment;
         }
 
         return $options;
-
     }
 }
