@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Modules\Setting\Facades\Settings as SettingsFacade;
 use Modules\Setting\Repositories\SettingRepository;
 use Modules\Setting\Support\Settings;
+use Modules\Setting\Support\ThemeOptions;
 
 class SettingServiceProvider extends ServiceProvider
 {
@@ -38,10 +39,13 @@ class SettingServiceProvider extends ServiceProvider
         $this->app['setting.settings'] = $this->app->share(function ($app) {
             return new Settings($app[SettingRepository::class]);
         });
-
         $this->app->booting(function () {
             $loader = AliasLoader::getInstance();
             $loader->alias('Settings', SettingsFacade::class);
+        });
+
+        $this->app['setting.themeOptions'] = $this->app->share(function ($app) {
+            return new ThemeOptions($this->app['stylist']->current());
         });
     }
 

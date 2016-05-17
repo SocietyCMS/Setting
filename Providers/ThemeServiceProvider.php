@@ -4,6 +4,7 @@ namespace Modules\Setting\Providers;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
+use Modules\Setting\Providers\Theme\ThemeOptions;
 
 class ThemeServiceProvider extends ServiceProvider
 {
@@ -17,6 +18,7 @@ class ThemeServiceProvider extends ServiceProvider
         $this->app->booted(function () {
             $this->registerAllThemes();
             $this->setActiveTheme();
+            $this->registerActiveThemeVendorNamespaces($this->app['stylist']->current()->getPath());
         });
     }
 
@@ -29,7 +31,6 @@ class ThemeServiceProvider extends ServiceProvider
 
         foreach ($directories as $directory) {
             $this->app['stylist']->registerPath($directory);
-            $this->registerThemeVendorNamespaces($directory);
         }
     }
 
@@ -59,7 +60,7 @@ class ThemeServiceProvider extends ServiceProvider
         return $this->app['request']->segment($segment) === $this->app['config']->get('society.core.core.admin-prefix');
     }
 
-    private function registerThemeVendorNamespaces($directory)
+    private function registerActiveThemeVendorNamespaces($directory)
     {
         $themeVendorDirectory = "{$directory}/views/vendor";
 
