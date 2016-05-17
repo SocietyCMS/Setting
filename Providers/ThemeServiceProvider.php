@@ -4,7 +4,6 @@ namespace Modules\Setting\Providers;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
-use Modules\Setting\Providers\Theme\ThemeOptions;
 
 class ThemeServiceProvider extends ServiceProvider
 {
